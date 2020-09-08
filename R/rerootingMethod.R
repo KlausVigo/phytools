@@ -19,7 +19,7 @@ rerootingMethod<-function(tree,x,model=c("ER","SYM"),...){
 	}
 	yy<-yy[tree$tip.label,]
 	yy<-yy/rowSums(yy)
-	YY<-fitMk(tree,yy,model=model,output.liks=TRUE,...)
+	YY<-fitMk2(tree,yy,model=model,output.liks=TRUE,...)
 	Q<-matrix(c(0,YY$rates)[YY$index.matrix+1],length(YY$states),
 		length(YY$states),dimnames=list(YY$states,YY$states))
 	diag(Q)<--colSums(Q,na.rm=TRUE)
@@ -28,7 +28,7 @@ rerootingMethod<-function(tree,x,model=c("ER","SYM"),...){
 	ff<-function(nn){
 		tt<-if(nn>Ntip(tree)) ape::root.phylo(tree,node=nn) else 
 			reroot(tree,nn,tree$edge.length[which(tree$edge[,2]==nn)])
-		fitMk(tt,yy,model=model,fixedQ=Q,output.liks=TRUE)$lik.anc[1,]
+		fitMk2(tt,yy,model=model,fixedQ=Q,output.liks=TRUE)$lik.anc[1,]
 	}
 	XX<-t(sapply(nn,ff))
 	if(tips) XX<-rbind(XX[1:n,],YY$lik.anc[1,],if(tree$Nnode>1) 
